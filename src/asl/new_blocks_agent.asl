@@ -42,7 +42,16 @@
 
 +!delivered <-
     goto(dropzone);
-    putDown.
+    putDown;
+    jason.actions.bug.
 
 +!reset <-
     .abolish(visited(_)).
+
+-!P[A]
+<-  
+    // .print("Fail!!! ", A);
+    jason.actions.stopapp(A);
+    // jason.actions.stopapp;
+    False==True;
+    .

@@ -56,6 +56,41 @@ task blocks (type: JavaExec, dependsOn: 'classes') {
     classpath sourceSets.main.runtimeClasspath
 }
 
+task copyJarsToBuild {
+    inputs.files configurations.runtimeClasspath.files
+    outputs.dir  'build/libs'
+    doLast {
+        copy {
+            from configurations.runtimeClasspath
+            into 'build/libs'
+        }
+    }
+}
+task toJar (type: Jar, dependsOn: 'copyJarsToBuild') {
+    // from sourceSets.main.runtimeClasspath
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        sourceSets.main.runtimeClasspath
+        // configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+        // sourceSets.main.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } 
+        // sourceSets.main.runtimeClasspath
+    }
+    // from { sourceSets.main.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    // // from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    // with jar  
+    manifest {
+        attributes(
+            'Class-Path': configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { it.getName() }.join(' '),
+            'Main-Class': "jason.fuzzer.Main"
+        )
+    }  
+}
+
+task jazzer(type: Exec){
+    description 'runs Jazzer'
+    commandLine './jazzer', '--cp=build/libs/jason-util-1.0.jar', '--target_class=jason.fuzzer.FuzzerTarget'
+}
+
 clean {
     delete 'bin'
     delete 'build'
