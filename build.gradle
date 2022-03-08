@@ -52,7 +52,7 @@ task run (type: JavaExec, dependsOn: 'classes') {
 task blocks (type: JavaExec, dependsOn: 'classes') {
     description 'runs the blocksworld application'
     main 'jason.infra.centralised.RunCentralisedMAS'
-    args 'blocksworld.mas2j'
+    args 'blocksworld.mas2j', 'envConf/jazzer.json'
     classpath sourceSets.main.runtimeClasspath
 }
 
@@ -94,5 +94,17 @@ task jazzer(type: Exec){
 clean {
     delete 'bin'
     delete 'build'
+}
+
+task cleanLogs(type:Delete) {
+    delete "${rootDir}/debug-log"
+    delete fileTree('./') {
+        include 'Crash_*'
+        include 'crash-*'
+        include 'timeout-*'
+    }
+    doLast {
+        mkdir "debug-log"
+    }
 }
 

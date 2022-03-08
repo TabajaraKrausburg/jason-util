@@ -52,22 +52,23 @@
 
 +!delivered <-
     goto(dropzone);
-    putDown;
-    jason.actions.bug.
+    putDown.
 
 +!deliveryChecked(Id) : delivered(Id) <-
-    ?delivered(Id).
+    ?delivered(Id);
+    .
 
 +!deliveryChecked(_) <-
-    .print("I am Error.").
+    .print("I am Error.");
+    jason.actions.bug;
+    .
 
 +!reset <-
     .abolish(visited(_)).
 
 -!P[A]
 <-  
-    // .print("Fail!!! ", A);
+    .print("Failed ",P," because ", A);
     jason.actions.stopapp(A);
-    // jason.actions.stopapp;
-    False==True;
+    False==True; // do not recover from the failure!
     .
