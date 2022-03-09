@@ -25,15 +25,15 @@
     // !charged;
     !reset.
 
-+!charged[wasDoing(G)] : energy(MyEnergy) & MyEnergy < 80 <-
++!charged[H|T] : energy(MyEnergy) & MyEnergy < 80 <-
     .print("charging ",MyEnergy);
     recharge;
-    !charged[wasDoing(G)];
+    !charged[H|T];
     .
 +!charged[wasDoing(G)] : energy(MyEnergy) <-
     .print("My energy is ", MyEnergy);
-    // .resume(G);
-    .resume(found(_));
+    .resume(G);
+    // .resume(found(_));
     .
 
 +!holding(Colour) : holding(Block) & colour(Block, Colour) <-
