@@ -1,5 +1,16 @@
-+task(Id, Colour) <-
-    wait;
+!start.
++!start
+<-
+    .wait(10000);
+    jason.actions.stopapp;
+    .
+
+!wait.
++!wait <-
+    wait.
+
++task(Id, Colour) : not busy <-
+    +busy;
     !prepared;
     !holding(Colour);
     !processed;
@@ -11,15 +22,19 @@
     !prepared.
 
 +!prepared <-
-    !charged;
+    // !charged;
     !reset.
 
-+!charged : energy(MyEnergy) & MyEnergy < 80 <-
++!charged[wasDoing(G)] : energy(MyEnergy) & MyEnergy < 80 <-
+    .print("charging ",MyEnergy);
     recharge;
-    !charged.
-
-+!charged : energy(MyEnergy) <-
-    .print("My energy is ", MyEnergy).
+    !charged[wasDoing(G)];
+    .
++!charged[wasDoing(G)] : energy(MyEnergy) <-
+    .print("My energy is ", MyEnergy);
+    // .resume(G);
+    .resume(found(_));
+    .
 
 +!holding(Colour) : holding(Block) & colour(Block, Colour) <-
     .print("That's good.").
@@ -56,7 +71,7 @@
 
 +!deliveryChecked(Id) : delivered(Id) <-
     ?delivered(Id);
-    .
+    -busy.
 
 +!deliveryChecked(_) <-
     .print("I am Error.");
@@ -65,6 +80,22 @@
 
 +!reset <-
     .abolish(visited(_)).
+
+@stop2[atomic]
+^!found(Terms)[state(pending)]
+    : .intend(charged)
+<- 
+    .print("I already intend to charge!");    
+    .suspend(found(Terms));
+    .
+@stop[atomic]
+^!found(Terms)[state(pending)]
+    : energy(MyEnergy) & MyEnergy < 50
+<- 
+    .print("I need to charge! ");    
+    !!charged[wasDoing(found(Terms))];
+    .suspend(found(Terms));
+    .
 
 -!P[A]
 <-  
