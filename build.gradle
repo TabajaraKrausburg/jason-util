@@ -102,6 +102,7 @@ task cleanLogs(type:Delete) {
         include 'Crash_*'
         include 'crash-*'
         include 'timeout-*'
+        include 'slow-unit-*'
     }
     doLast {
         mkdir "debug-log"
